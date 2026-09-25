@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bady Language Schools — Weekly Timetable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1A2333;
+  --ink-soft:#4B5568;
+  --paper:#EEF0EA;
+  --paper-raised:#FFFFFF;
+  --line:#D8DBCF;
+  --gold:#AD7B26;
+  --lang:#2F6F62;
+  --stem:#2C4A8C;
+  --human:#8C4A2C;
+  --art:#7A4E8C;
+  --break-bg:#E4E1D6;
+  --radius:10px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#EDEFEA; --ink-soft:#AEB4A6; --paper:#161A15; --paper-raised:#20241E;
+    --line:#333828; --break-bg:#262B22;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#EDEFEA; --ink-soft:#AEB4A6; --paper:#161A15; --paper-raised:#20241E;
+  --line:#333828; --break-bg:#262B22;
+}
+*{margin:0;padding:0;box-sizing:border-box; min-width:0;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+img,svg{max-width:100%;}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:'Nunito',sans-serif;
+  min-height:100%;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.wrap{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem 4rem; overflow-wrap:break-word;}
+header.hero{margin-bottom:2.25rem;}
+.eyebrow{
+  font-family:'Nunito',sans-serif; font-size:.8rem; color:var(--gold);
+  font-weight:600; letter-spacing:.02em; margin-bottom:.6rem;
+}
+h1{
+  font-family:'Baloo 2',sans-serif; font-weight:600; font-size:clamp(2rem,5vw,2.9rem);
+  line-height:1.08; letter-spacing:-.01em; max-width:14ch;
+}
+h1 em{font-style:italic; color:var(--gold); font-weight:500;}
+.sub{
+  margin-top:.9rem; font-size:1.05rem; color:var(--ink-soft); max-width:52ch; line-height:1.55;
+}
+.stage-tabs{
+  display:flex; gap:.5rem; margin:2rem 0 1rem; flex-wrap:wrap;
+  border-bottom:1px solid var(--line); padding-bottom:0;
+}
+.stage-tab{
+  font-family:'Nunito',sans-serif; font-size:.95rem; font-weight:600; color:var(--ink-soft);
+  background:none; border:none; padding:.6rem .2rem; cursor:pointer;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+}
+.stage-tab.active{color:var(--ink); border-bottom-color:var(--gold);}
+.class-grid{
+  display:flex; flex-wrap:wrap; gap:.5rem; margin:1.1rem 0 2rem;
+}
+.class-chip{
+  font-family:'Nunito',sans-serif; font-size:.92rem; font-weight:500; color:var(--ink);
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:8px;
+  padding:.5rem 1rem; cursor:pointer;
+}
+.class-chip.active{background:var(--ink); color:var(--paper-raised); border-color:var(--ink);}
+.class-chip:hover:not(.active){border-color:var(--gold);}
+
+.panel{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden;
+}
+.panel-head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:1rem;
+  padding:1.3rem 1.5rem; border-bottom:1px solid var(--line); flex-wrap:wrap;
+}
+.panel-head h2{
+  font-family:'Baloo 2',sans-serif; font-weight:600; font-size:1.6rem;
+}
+.panel-head .meta{font-size:.85rem; color:var(--ink-soft);}
+.print-btn{
+  font-family:'Nunito',sans-serif; font-size:.85rem; font-weight:600; color:var(--ink);
+  background:var(--paper); border:1px solid var(--line); border-radius:7px;
+  padding:.5rem .9rem; cursor:pointer;
+}
+.print-btn:hover{border-color:var(--gold);}
+
+.table-scroll{overflow-x:auto;}
+table.tt{width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; min-width:760px;}
+table.tt th, table.tt td{
+  border-bottom:1px solid var(--line); border-right:1px solid var(--line);
+  padding:.9rem .5rem; font-size:.86rem; line-height:1.35; text-align:center; vertical-align:middle;
+  overflow-wrap:break-word; hyphens:auto;
+}
+table.tt th:last-child, table.tt td:last-child{border-right:none;}
+table.tt tbody tr:last-child td{border-bottom:none;}
+table.tt tbody tr:nth-child(even) td.subject,
+table.tt tbody tr:nth-child(even) td.subject.empty{background:color-mix(in srgb, var(--paper) 45%, var(--paper-raised));}
+table.tt thead th{
+  font-family:'Nunito',sans-serif; font-weight:600; color:var(--ink-soft); font-size:.76rem;
+  letter-spacing:.02em; background:var(--paper); padding:.8rem .6rem; border-bottom:1px solid var(--line);
+}
+table.tt thead th.today{color:var(--gold);}
+table.tt td.period-col, table.tt th.period-col{
+  font-family:'Baloo 2',sans-serif; font-weight:600; color:var(--ink-soft); font-size:.92rem;
+  width:6.5rem; background:var(--paper); border-right:1px solid var(--line);
+}
+table.tt td.period-col.today{color:var(--gold); background:color-mix(in srgb, var(--gold) 10%, var(--paper));}
+table.tt td.subject{font-weight:500; height:3.4rem;}
+table.tt td.subject.empty{color:var(--line); font-weight:400;}
+table.tt td.subject .dot{
+  display:inline-block; width:.4rem; height:.4rem; border-radius:50%; margin-right:.4rem;
+  vertical-align:middle; flex:none;
+}
+table.tt td.subject{white-space:normal;}
+table.tt td.brk{
+  background:var(--break-bg); color:var(--ink-soft); font-style:italic; font-size:.76rem;
+  width:3.6rem;
+}
+table.tt th.brk-head{width:3.6rem;}
+
+
+.legend{display:flex; flex-wrap:wrap; gap:1rem; padding:1rem 1.5rem 1.4rem; font-size:.78rem; color:var(--ink-soft);}
+.legend span{display:inline-flex; align-items:center; gap:.4rem;}
+.legend .dot{width:.5rem; height:.5rem; border-radius:50%; display:inline-block;}
+
+footer{margin-top:2.5rem; font-size:.82rem; color:var(--ink-soft); border-top:1px solid var(--line); padding-top:1.2rem;}
+
+@media print{
+  .stage-tabs,.class-grid,.hero,.print-btn,footer{display:none !important;}
+  body{background:#fff;}
+  .panel{border:none;}
+  .wrap{padding:0;max-width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Bady Language Schools</div>
+    <h1>This week's timetable, <em>one link away.</em></h1>
+    <p class="sub">Pick a class below to see its schedule. No more re-sending a PDF every week — bookmark this page and it's always here, for every class, in one place.</p>
+  </header>
+
+  <div class="stage-tabs" id="stageTabs"></div>
+  <div class="class-grid" id="classGrid"></div>
+
+  <section class="panel" id="panel">
+    <div class="panel-head">
+      <div>
+        <h2 id="className">—</h2>
+        <div class="meta" id="classMeta"></div>
+      </div>
+      <button class="print-btn" onclick="window.print()">Print this timetable</button>
+    </div>
+    <div class="table-scroll">
+      <table class="tt" id="ttTable"></table>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <footer>Generated from the school's official weekly schedule. Data may be updated by the school office as classes change.</footer>
+</div>
+
+<script>
+const DATA = {"Prim.1A":{"Sunday":[["1","P.E."],["2","English"],["3","English"],["Break","Break"],["4","Second Language (DF)"],["5","Math"],["6","Math"],["7","Arabic"],["8","Arabic"]],"Monday":[["1","Phonics"],["2","English"],["3","English"],["Break","Break"],["4","Religion (Islamic/Christian)"],["5","P.E."],["6","Music"],["7","Arabic"],["8","Arabic"]],"Tuesday":[["1","Science"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","Story"],["5","English"],["6","English"],["7","Math"],["8","Math"]],"Wednesday":[["1","Arabic"],["2","Arabic"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Science"],["5","Science"],["6","Phonics"],["7","Math"],["8","Math"]],"Thursday":[["1","Religion (Islamic/Christian)"],["2","Art"],["3","Art"],["Break","Break"],["4","English"],["5","English"],["6","Computer"],["7","Story"],["8","Second Language (DF)"]]},"Prim.1B":{"Sunday":[["1","Science"],["2","Science"],["3","Music"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Phonics"],["7","English"],["8","English"]],"Monday":[["1","English"],["2","English"],["3","Computer"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Phonics"],["7","Religion (Islamic/Christian)"],["8","Science"]],"Tuesday":[["1","Story"],["2","Math"],["3","Math"],["Break","Break"],["4","Religion (Islamic/Christian)"],["5","P.E."],["6","Second Language (DF)"],["7","English"],["8","English"]],"Wednesday":[["1","Religion (Islamic/Christian)"],["2","Art"],["3","Art"],["Break","Break"],["4","Math"],["5","Math"],["6","Arabic"],["7","Arabic"],["8","Story"]],"Thursday":[["1","Math"],["2","Math"],["3","Second Language (DF)"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","P.E."],["7","English"],["8","English"]]},"Prim.1C":{"Sunday":[["1","Second Language (DF)"],["2","P.E."],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Math"],["7","Math"],["8","Story"]],"Monday":[["1","Phonics"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","Art"],["5","Art"],["6","Story"],["7","English"],["8","English"]],"Tuesday":[["1","Math"],["2","Math"],["3","Science"],["Break","Break"],["4","Religion (Islamic/Christian)"],["5","English"],["6","English"],["7","Arabic"],["8","Arabic"]],"Wednesday":[["1","Music"],["2","English"],["3","English"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Computer"],["7","Science"],["8","Science"]],"Thursday":[["1","Math"],["2","Math"],["3","P.E."],["Break","Break"],["4","English"],["5","English"],["6","Second Language (DF)"],["7","Religion (Islamic/Christian)"],["8","Phonics"]]},"Prim.1D":{"Sunday":[["1","English"],["2","English"],["3","Second Language (DF)"],["Break","Break"],["4","Story"],["5","Science"],["6","Science"],["7","Arabic"],["8","Arabic"]],"Monday":[["1","P.E."],["2","Computer"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Phonics"],["5","Arabic"],["6","Arabic"],["7","Art"],["8","Art"]],"Tuesday":[["1","Religion (Islamic/Christian)"],["2","English"],["3","English"],["Break","Break"],["4","Math"],["5","Math"],["6","Science"],["7","Second Language (DF)"],["8","Phonics"]],"Wednesday":[["1","P.E."],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","Religion (Islamic/Christian)"],["5","English"],["6","English"],["7","Math"],["8","Math"]],"Thursday":[["1","Story"],["2","English"],["3","English"],["Break","Break"],["4","Music"],["5","Math"],["6","Math"],["7","Arabic"],["8","Arabic"]]},"Prim.2A":{"Sunday":[["1","Phonics"],["2","Art"],["3","Art"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Second Language (DF)"],["7","English"],["8","English"]],"Monday":[["1","Religion (Islamic/Christian)"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","Math"],["5","Math"],["6","English"],["7","English"],["8","Phonics"]],"Tuesday":[["1","Second Language (DF)"],["2","Music"],["3","P.E."],["Break","Break"],["4","Science"],["5","Science"],["6","English"],["7","English"],["8","Religion (Islamic/Christian)"]],"Wednesday":[["1","Math"],["2","Math"],["3","P.E."],["Break","Break"],["4","Phonics"],["5","Religion (Islamic/Christian)"],["6","Arabic"],["7","Arabic"],["8","Computer"]],"Thursday":[["1","English"],["2","English"],["3","Phonics"],["Break","Break"],["4","Math"],["5","Math"],["6","Arabic"],["7","Arabic"],["8","Science"]]},"Prim.2B":{"Sunday":[["1","Math"],["2","Math"],["3","P.E."],["Break","Break"],["4","English"],["5","English"],["6","Arabic"],["7","Arabic"],["8","Religion (Islamic/Christian)"]],"Monday":[["1","Story"],["2","English"],["3","English"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Math"],["7","Math"],["8","Religion (Islamic/Christian)"]],"Tuesday":[["1","Phonics"],["2","English"],["3","English"],["Break","Break"],["4","Math"],["5","Math"],["6","Arabic"],["7","Arabic"],["8","Second Language (DF)"]],"Wednesday":[["1","Story"],["2","P.E."],["3","Phonics"],["Break","Break"],["4","Music"],["5","Science"],["6","Religion (Islamic/Christian)"],["7","Art"],["8","Art"]],"Thursday":[["1","Second Language (DF)"],["2","Science"],["3","Science"],["Break","Break"],["4","Computer"],["5","Arabic"],["6","Arabic"],["7","English"],["8","English"]]},"Prim.2C":{"Sunday":[["1","Religion (Islamic/Christian)"],["2","English"],["3","English"],["Break","Break"],["4","Second Language (DF)"],["5","Science"],["6","Science"],["7","Arabic"],["8","Arabic"]],"Monday":[["1","English"],["2","English"],["3","Science"],["Break","Break"],["4","Math"],["5","Math"],["6","Arabic"],["7","Arabic"],["8","Computer"]],"Tuesday":[["1","P.E."],["2","English"],["3","English"],["Break","Break"],["4","Music"],["5","Arabic"],["6","Arabic"],["7","Math"],["8","Math"]],"Wednesday":[["1","Story"],["2","Math"],["3","Math"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","P.E."],["7","Religion (Islamic/Christian)"],["8","Phonics"]],"Thursday":[["1","English"],["2","English"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Art"],["5","Art"],["6","Story"],["7","Phonics"],["8","Second Language (DF)"]]},"Prim.2D":{"Sunday":[["1","Music"],["2","Math"],["3","Math"],["Break","Break"],["4","Art"],["5","Art"],["6","Religion (Islamic/Christian)"],["7","English"],["8","English"]],"Monday":[["1","Math"],["2","Math"],["3","Story"],["Break","Break"],["4","Science"],["5","Science"],["6","P.E."],["7","Arabic"],["8","Arabic"]],"Tuesday":[["1","Arabic"],["2","Arabic"],["3","Phonics"],["Break","Break"],["4","Second Language (DF)"],["5","Religion (Islamic/Christian)"],["6","English"],["7","English"],["8","Science"]],"Wednesday":[["1","English"],["2","English"],["3","Story"],["Break","Break"],["4","Math"],["5","Math"],["6","Phonics"],["7","Arabic"],["8","Arabic"]],"Thursday":[["1","P.E."],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","English"],["5","English"],["6","Religion (Islamic/Christian)"],["7","Second Language (DF)"],["8","Computer"]]},"Prim.3A":{"Sunday":[["1","Second Language (DF)"],["2","Math"],["3","Math"],["Break","Break"],["4","Art"],["5","Art"],["6","Religion (Islamic/Christian)"],["7","English"],["8","English"]],"Monday":[["1","Second Language (DF)"],["2","English"],["3","English"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Math"],["7","Math"],["8","Music"]],"Tuesday":[["1","Religion (Islamic/Christian)"],["2","P.E."],["3","Story"],["Break","Break"],["4","Computer"],["5","Arabic"],["6","Arabic"],["7","English"],["8","English"]],"Wednesday":[["1","P.E."],["2","Phonics"],["3","Story"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","English"],["7","English"],["8","Science"]],"Thursday":[["1","Math"],["2","Math"],["3","Phonics"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Religion (Islamic/Christian)"],["7","Science"],["8","Science"]]},"Prim.3B":{"Sunday":[["1","Phonics"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","English"],["5","English"],["6","Story"],["7","Art"],["8","Art"]],"Monday":[["1","Math"],["2","Math"],["3","P.E."],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Religion (Islamic/Christian)"],["7","English"],["8","English"]],"Tuesday":[["1","Science"],["2","Science"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Second Language (DF)"],["5","Arabic"],["6","Arabic"],["7","Math"],["8","Math"]],"Wednesday":[["1","Math"],["2","Math"],["3","Computer"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","English"],["7","English"],["8","Religion (Islamic/Christian)"]],"Thursday":[["1","Phonics"],["2","P.E."],["3","Story"],["Break","Break"],["4","English"],["5","English"],["6","Science"],["7","Second Language (DF)"],["8","Music"]]},"Prim.3C":{"Sunday":[["1","Arabic"],["2","Arabic"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Story"],["5","P.E."],["6","Second Language (DF)"],["7","English"],["8","English"]],"Monday":[["1","Science"],["2","Art"],["3","Art"],["Break","Break"],["4","Math"],["5","Math"],["6","P.E."],["7","Second Language (DF)"],["8","Phonics"]],"Tuesday":[["1","Arabic"],["2","Arabic"],["3","Music"],["Break","Break"],["4","Phonics"],["5","Math"],["6","Math"],["7","English"],["8","English"]],"Wednesday":[["1","Arabic"],["2","Arabic"],["3","Story"],["Break","Break"],["4","English"],["5","English"],["6","Math"],["7","Math"],["8","Religion (Islamic/Christian)"]],"Thursday":[["1","Arabic"],["2","Arabic"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Science"],["5","Science"],["6","English"],["7","English"],["8","Computer"]]},"Prim.3D":{"Sunday":[["1","English"],["2","English"],["3","Second Language (DF)"],["Break","Break"],["4","Math"],["5","Math"],["6","Story"],["7","Arabic"],["8","Arabic"]],"Monday":[["1","Phonics"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","Computer"],["5","P.E."],["6","English"],["7","English"],["8","Religion (Islamic/Christian)"]],"Tuesday":[["1","Math"],["2","Math"],["3","Second Language (DF)"],["Break","Break"],["4","English"],["5","English"],["6","Religion (Islamic/Christian)"],["7","Arabic"],["8","Arabic"]],"Wednesday":[["1","Arabic"],["2","Arabic"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Story"],["5","Science"],["6","P.E."],["7","Art"],["8","Art"]],"Thursday":[["1","Phonics"],["2","Science"],["3","Science"],["Break","Break"],["4","English"],["5","English"],["6","Music"],["7","Math"],["8","Math"]]},"Prim.4A":{"Sunday":[["1","P.E."],["2","English"],["3","English"],["4","Art"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","Math"],["8","Math"]],"Monday":[["1","Science"],["2","Science"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","English"],["6","English"],["7","Social"],["8","Social"]],"Tuesday":[["1","P.E."],["2","Second Language (DF)"],["3","Religion (Islamic/Christian)"],["4","English"],["Break","Break"],["5","Math"],["6","Math"],["7","ICT"],["8","Religion (Islamic/Christian)"]],"Wednesday":[["1","Arabic"],["2","Arabic"],["3","Math"],["4","Math"],["Break","Break"],["5","Second Language (DF)"],["6","Religion (Islamic/Christian)"],["7","English"],["8","English"]],"Thursday":[["1","Science"],["2","Science"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","English"],["6","English"],["7","Social"],["8","Social"]]},"Prim.4B":{"Sunday":[["1","Math"],["2","Math"],["3","P.E."],["4","Religion (Islamic/Christian)"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","English"],["8","English"]],"Monday":[["1","Social"],["2","Social"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","Math"],["6","Math"],["7","English"],["8","English"]],"Tuesday":[["1","Second Language (DF)"],["2","Religion (Islamic/Christian)"],["3","Science"],["4","Science"],["Break","Break"],["5","English"],["6","English"],["7","Arabic"],["8","Arabic"]],"Wednesday":[["1","English"],["2","English"],["3","P.E."],["4","Art"],["Break","Break"],["5","ICT"],["6","Second Language (DF)"],["7","Arabic"],["8","Arabic"]],"Thursday":[["1","Social"],["2","Social"],["3","Math"],["4","Math"],["Break","Break"],["5","Science"],["6","Science"],["7","English"],["8","Religion (Islamic/Christian)"]]},"Prim.4C":{"Sunday":[["1","English"],["2","English"],["3","ICT"],["4","Religion (Islamic/Christian)"],["Break","Break"],["5","Science"],["6","Science"],["7","Arabic"],["8","Arabic"]],"Monday":[["1","Math"],["2","Math"],["3","English"],["4","English"],["Break","Break"],["5","P.E."],["6","Second Language (DF)"],["7","Science"],["8","Science"]],"Tuesday":[["1","Art"],["2","Religion (Islamic/Christian)"],["3","English"],["4","Second Language (DF)"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","Social"],["8","Social"]],"Wednesday":[["1","English"],["2","English"],["3","Social"],["4","Social"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","Math"],["8","Math"]],"Thursday":[["1","English"],["2","English"],["3","Math"],["4","Math"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","P.E."],["8","Religion (Islamic/Christian)"]]},"Prim.4D":{"Sunday":[["1","Arabic"],["2","Arabic"],["3","Social"],["4","Social"],["Break","Break"],["5","Religion (Islamic/Christian)"],["6","English"],["7","Math"],["8","Math"]],"Monday":[["1","Arabic"],["2","Arabic"],["3","Science"],["4","Science"],["Break","Break"],["5","ICT"],["6","Religion (Islamic/Christian)"],["7","English"],["8","English"]],"Tuesday":[["1","English"],["2","English"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","P.E."],["6","Second Language (DF)"],["7","Social"],["8","Social"]],"Wednesday":[["1","Second Language (DF)"],["2","Religion (Islamic/Christian)"],["3","Math"],["4","Math"],["Break","Break"],["5","P.E."],["6","English"],["7","English"],["8","Art"]],"Thursday":[["1","Science"],["2","Science"],["3","English"],["4","English"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","Math"],["8","Math"]]},"Prim.5A":{"Sunday":[["1","Science"],["2","Science"],["3","Social"],["4","Social"],["Break","Break"],["5","English"],["6","English"],["7","Arabic"],["8","Arabic"]],"Monday":[["1","English"],["2","P.E."],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","Art"],["6","Math"],["7","Math"],["8","Religion (Islamic/Christian)"]],"Tuesday":[["1","Math"],["2","Math"],["3","English"],["4","English"],["Break","Break"],["5","P.E."],["6","Religion (Islamic/Christian)"],["7","Second Language (DF)"],["8","ICT"]],"Wednesday":[["1","English"],["2","English"],["3","Math"],["4","Math"],["Break","Break"],["5","Science"],["6","Science"],["7","Arabic"],["8","Arabic"]],"Thursday":[["1","Second Language (DF)"],["2","Arabic"],["3","Arabic"],["4","Religion (Islamic/Christian)"],["Break","Break"],["5","Social"],["6","Social"],["7","English"],["8","English"]]},"Prim.5B":{"Sunday":[["1","Art"],["2","Second Language (DF)"],["3","English"],["4","Religion (Islamic/Christian)"],["Break","Break"],["5","ICT"],["6","P.E."],["7","Arabic"],["8","Arabic"]],"Monday":[["1","Science"],["2","Science"],["3","English"],["4","English"],["Break","Break"],["5","P.E."],["6","Religion (Islamic/Christian)"],["7","Arabic"],["8","Arabic"]],"Tuesday":[["1","Social"],["2","Social"],["3","Math"],["4","Math"],["Break","Break"],["5","Second Language (DF)"],["6","English"],["7","English"],["8","Religion (Islamic/Christian)"]],"Wednesday":[["1","Math"],["2","Math"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","English"],["6","English"],["7","Social"],["8","Social"]],"Thursday":[["1","Arabic"],["2","Arabic"],["3","English"],["4","English"],["Break","Break"],["5","Math"],["6","Math"],["7","Science"],["8","Science"]]},"Prim.5C":{"Sunday":[["1","Arabic"],["2","Arabic"],["3","Science"],["4","Science"],["Break","Break"],["5","Math"],["6","Math"],["7","P.E."],["8","English"]],"Monday":[["1","Math"],["2","Math"],["3","P.E."],["4","Religion (Islamic/Christian)"],["Break","Break"],["5","English"],["6","English"],["7","Religion (Islamic/Christian)"],["8","Second Language (DF)"]],"Tuesday":[["1","English"],["2","English"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","ICT"],["6","Art"],["7","Math"],["8","Math"]],"Wednesday":[["1","Social"],["2","Social"],["3","Science"],["4","Science"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","English"],["8","English"]],"Thursday":[["1","English"],["2","English"],["3","Social"],["4","Social"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","Religion (Islamic/Christian)"],["8","Second Language (DF)"]]},"Prim.6A":{"Sunday":[["1","English"],["2","Arabic"],["3","Arabic"],["4","Religion (Islamic/Christian)"],["Break","Break"],["5","Math"],["6","Math"],["7","Science"],["8","Science"]],"Monday":[["1","ICT"],["2","English"],["3","English"],["4","Religion (Islamic/Christian)"],["Break","Break"],["5","Science"],["6","Science"],["7","Arabic"],["8","Arabic"]],"Tuesday":[["1","English"],["2","English"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","Social"],["6","Social"],["7","P.E."],["8","Second Language (DF)"]],"Wednesday":[["1","Math"],["2","Math"],["3","Social"],["4","Social"],["Break","Break"],["5","English"],["6","English"],["7","Arabic"],["8","Arabic"]],"Thursday":[["1","English"],["2","English"],["3","Math"],["4","Math"],["Break","Break"],["5","P.E."],["6","Second Language (DF)"],["7","Religion (Islamic/Christian)"],["8","Art"]]},"Prim.6B":{"Sunday":[["1","Arabic"],["2","Arabic"],["3","English"],["4","English"],["Break","Break"],["5","Math"],["6","Math"],["7","Social"],["8","Social"]],"Monday":[["1","English"],["2","Religion (Islamic/Christian)"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","Social"],["6","Social"],["7","Science"],["8","Science"]],"Tuesday":[["1","Religion (Islamic/Christian)"],["2","P.E."],["3","Math"],["4","Math"],["Break","Break"],["5","English"],["6","English"],["7","Arabic"],["8","Arabic"]],"Wednesday":[["1","Arabic"],["2","Arabic"],["3","English"],["4","English"],["Break","Break"],["5","Art"],["6","Religion (Islamic/Christian)"],["7","P.E."],["8","Second Language (DF)"]],"Thursday":[["1","ICT"],["2","Second Language (DF)"],["3","Math"],["4","Math"],["Break","Break"],["5","Science"],["6","Science"],["7","English"],["8","English"]]},"Prim.6C":{"Sunday":[["1","Math"],["2","Math"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","Social"],["6","Social"],["7","English"],["8","English"]],"Monday":[["1","Arabic"],["2","Arabic"],["3","Social"],["4","Social"],["Break","Break"],["5","Religion (Islamic/Christian)"],["6","English"],["7","Math"],["8","Math"]],"Tuesday":[["1","Arabic"],["2","Arabic"],["3","English"],["4","English"],["Break","Break"],["5","Science"],["6","Science"],["7","Religion (Islamic/Christian)"],["8","Second Language (DF)"]],"Wednesday":[["1","P.E."],["2","Science"],["3","Science"],["4","Religion (Islamic/Christian)"],["Break","Break"],["5","Math"],["6","Math"],["7","English"],["8","English"]],"Thursday":[["1","English"],["2","English"],["3","Art"],["4","ICT"],["Break","Break"],["5","P.E."],["6","Second Language (DF)"],["7","Arabic"],["8","Arabic"]]},"Prep.1A":{"Sunday":[["1","Social"],["2","Social"],["3","English"],["4","English"],["Break","Break"],["5","Science"],["6","Science"],["7","Religion (Islamic/Christian)"],["8","Math"]],"Monday":[["1","English"],["2","English"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","Science"],["6","Science"],["7","P.E."],["8","Science"]],"Tuesday":[["1","Math"],["2","Math"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","Religion (Islamic/Christian)"],["6","P.E."],["7","English"],["8","English"]],"Wednesday":[["1","Second Language (DF)"],["2","Math"],["3","Math"],["4","English"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","Social"],["8","Social"]],"Thursday":[["1","Arabic"],["2","Arabic"],["3","English"],["4","English"],["Break","Break"],["5","ICT"],["6","Second Language (DF)"],["7","Library/Music"],["8","Art"]]},"Prep.1B":{"Sunday":[["1","ICT"],["2","Religion (Islamic/Christian)"],["3","Arabic"],["4","Math"],["Break","Break"],["5","P.E."],["6","English"],["7","English"],["8","Science"]],"Monday":[["1","Arabic"],["2","Arabic"],["3","Math"],["4","Math"],["Break","Break"],["5","Social"],["6","Social"],["7","English"],["8","English"]],"Tuesday":[["1","Arabic"],["2","Arabic"],["3","Art"],["4","English"],["Break","Break"],["5","Science"],["6","Science"],["7","Social"],["8","Social"]],"Wednesday":[["1","English"],["2","English"],["3","Math"],["4","Math"],["Break","Break"],["5","Religion (Islamic/Christian)"],["6","Arabic"],["7","Second Language (DF)"],["8","Library/Music"]],"Thursday":[["1","English"],["2","English"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","Science"],["6","Science"],["7","P.E."],["8","Second Language (DF)"]]},"Prep.1C":{"Sunday":[["1","Religion (Islamic/Christian)"],["2","P.E."],["3","English"],["4","English"],["Break","Break"],["5","Second Language (DF)"],["6","Art"],["7","Arabic"],["8","Arabic"]],"Monday":[["1","ICT"],["2","P.E."],["3","Math"],["4","Math"],["Break","Break"],["5","English"],["6","Library/Music"],["7","English"],["8","English"]],"Tuesday":[["1","English"],["2","English"],["3","Social"],["4","Social"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","Science"],["8","Science"]],"Wednesday":[["1","Math"],["2","Religion (Islamic/Christian)"],["3","Science"],["4","Science"],["Break","Break"],["5","English"],["6","English"],["7","Arabic"],["8","Arabic"]],"Thursday":[["1","Social"],["2","Social"],["3","Science"],["4","Second Language (DF)"],["Break","Break"],["5","Math"],["6","Math"],["7","Arabic"],["8","Arabic"]]},"Prep.1D":{"Sunday":[["1","English"],["2","English"],["3","Social"],["4","Social"],["Break","Break"],["5","Second Language (DF)"],["6","Math"],["7","Arabic"],["8","Arabic"]],"Monday":[["1","Science"],["2","Science"],["3","English"],["4","English"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","Social"],["8","Social"]],"Tuesday":[["1","Arabic"],["2","Arabic"],["3","Math"],["4","Math"],["Break","Break"],["5","P.E."],["6","English"],["7","ICT"],["8","Science"]],"Wednesday":[["1","Religion (Islamic/Christian)"],["2","Arabic"],["3","Arabic"],["4","Library/Music"],["Break","Break"],["5","English"],["6","English"],["7","Science"],["8","Science"]],"Thursday":[["1","Art"],["2","Math"],["3","Math"],["4","Second Language (DF)"],["Break","Break"],["5","P.E."],["6","Religion (Islamic/Christian)"],["7","English"],["8","English"]]},"Prep.1E":{"Sunday":[["1","English"],["2","English"],["3","Science"],["4","Science"],["Break","Break"],["5","Arabic"],["6","Arabic"],["7","P.E."],["8","Religion (Islamic/Christian)"]],"Monday":[["1","Math"],["2","Math"],["3","English"],["4","English"],["Break","Break"],["5","Science"],["6","Second Language (DF)"],["7","Arabic"],["8","Arabic"]],"Tuesday":[["1","Religion (Islamic/Christian)"],["2","Social"],["3","Social"],["4","Art"],["Break","Break"],["5","Second Language (DF)"],["6","Math"],["7","Math"],["8","English"]],"Wednesday":[["1","English"],["2","English"],["3","Arabic"],["4","Arabic"],["Break","Break"],["5","P.E."],["6","Science"],["7","Science"],["8","ICT"]],"Thursday":[["1","Arabic"],["2","Arabic"],["3","English"],["4","English"],["Break","Break"],["5","Math"],["6","Social"],["7","Social"],["8","Library/Music"]]},"Prep.2A":{"Sunday":[["1","Math"],["2","Science"],["3","Science"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","P.E."],["7","English"],["8","English"]],"Monday":[["1","Library/Music"],["2","ICT"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Science"],["5","Science"],["6","English"],["7","English"],["8","Second Language (DF)"]],"Tuesday":[["1","Science"],["2","Math"],["3","Math"],["Break","Break"],["4","English"],["5","English"],["6","P.E."],["7","Arabic"],["8","Arabic"]],"Wednesday":[["1","Art"],["2","Social"],["3","Social"],["Break","Break"],["4","Religion (Islamic/Christian)"],["5","Math"],["6","English"],["7","Arabic"],["8","Arabic"]],"Thursday":[["1","Second Language (DF)"],["2","English"],["3","English"],["Break","Break"],["4","Social"],["5","Social"],["6","Math"],["7","Arabic"],["8","Arabic"]]},"Prep.2B":{"Sunday":[["1","Science"],["2","Science"],["3","Second Language (DF)"],["Break","Break"],["4","Math"],["5","Arabic"],["6","Arabic"],["7","English"],["8","English"]],"Monday":[["1","Second Language (DF)"],["2","Social"],["3","Social"],["Break","Break"],["4","Math"],["5","Math"],["6","P.E."],["7","English"],["8","English"]],"Tuesday":[["1","Arabic"],["2","Arabic"],["3","P.E."],["Break","Break"],["4","Art"],["5","Social"],["6","Social"],["7","Religion (Islamic/Christian)"],["8","English"]],"Wednesday":[["1","Science"],["2","Science"],["3","Library/Music"],["Break","Break"],["4","Religion (Islamic/Christian)"],["5","English"],["6","English"],["7","Arabic"],["8","Arabic"]],"Thursday":[["1","Math"],["2","Math"],["3","ICT"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","English"],["7","English"],["8","Science"]]},"Prep.2C":{"Sunday":[["1","Arabic"],["2","Arabic"],["3","Math"],["Break","Break"],["4","Art"],["5","P.E."],["6","Social"],["7","Social"],["8","English"]],"Monday":[["1","English"],["2","English"],["3","P.E."],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Religion (Islamic/Christian)"],["7","Math"],["8","Second Language (DF)"]],"Tuesday":[["1","English"],["2","English"],["3","ICT"],["Break","Break"],["4","Math"],["5","Math"],["6","Science"],["7","Arabic"],["8","Arabic"]],"Wednesday":[["1","Science"],["2","Science"],["3","Math"],["Break","Break"],["4","Social"],["5","Social"],["6","English"],["7","English"],["8","Religion (Islamic/Christian)"]],"Thursday":[["1","Second Language (DF)"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","Library/Music"],["5","English"],["6","English"],["7","Science"],["8","Science"]]},"Prep.3A":{"Sunday":[["1","Math"],["2","Math"],["3","English"],["Break","Break"],["4","Science"],["5","Science"],["6","Social"],["7","Social"],["8","Second Language (DF)"]],"Monday":[["1","Religion (Islamic/Christian)"],["2","Social"],["3","Social"],["Break","Break"],["4","English"],["5","English"],["6","Science"],["7","Arabic"],["8","Arabic"]],"Tuesday":[["1","P.E."],["2","Science"],["3","Science"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","ICT"],["7","English"],["8","English"]],"Wednesday":[["1","English"],["2","English"],["3","P.E."],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Math"],["7","Math"],["8","Second Language (DF)"]],"Thursday":[["1","Math"],["2","Religion (Islamic/Christian)"],["3","Library/Music"],["Break","Break"],["4","English"],["5","English"],["6","Art"],["7","Arabic"],["8","Arabic"]]},"Prep.3B":{"Sunday":[["1","English"],["2","English"],["3","P.E."],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Science"],["7","Science"],["8","Second Language (DF)"]],"Monday":[["1","English"],["2","English"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Art"],["5","Math"],["6","Science"],["7","Science"],["8","Library/Music"]],"Tuesday":[["1","English"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","Social"],["5","Social"],["6","Math"],["7","Math"],["8","ICT"]],"Wednesday":[["1","Math"],["2","Math"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","English"],["5","English"],["6","Arabic"],["7","Arabic"],["8","Second Language (DF)"]],"Thursday":[["1","Social"],["2","Social"],["3","P.E."],["Break","Break"],["4","Science"],["5","Arabic"],["6","Arabic"],["7","English"],["8","English"]]},"Prep.3C":{"Sunday":[["1","English"],["2","English"],["3","Math"],["Break","Break"],["4","Science"],["5","Science"],["6","Arabic"],["7","Arabic"],["8","Religion (Islamic/Christian)"]],"Monday":[["1","Art"],["2","English"],["3","English"],["Break","Break"],["4","Library/Music"],["5","Arabic"],["6","Arabic"],["7","P.E."],["8","ICT"]],"Tuesday":[["1","Math"],["2","Math"],["3","Science"],["Break","Break"],["4","Second Language (DF)"],["5","English"],["6","English"],["7","Social"],["8","Social"]],"Wednesday":[["1","P.E."],["2","Social"],["3","Social"],["Break","Break"],["4","English"],["5","English"],["6","Second Language (DF)"],["7","Arabic"],["8","Arabic"]],"Thursday":[["1","Science"],["2","Science"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","English"],["5","Math"],["6","Math"],["7","Arabic"],["8","Arabic"]]},"Sec.1A":{"Sunday":[["1","History"],["2","History"],["3","Religion (Islamic/Christian)"],["Break","Break"],["4","Arabic"],["5","English"],["6","English"],["7","Math"],["8","Math"]],"Monday":[["1","P.E."],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","ICT"],["5","English"],["6","English"],["7","History"],["8","History"]],"Tuesday":[["1","English"],["2","ICT"],["3","Art"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Second Language (DF)"],["7","Chemistry"],["8","Chemistry"]],"Wednesday":[["1","Math"],["2","Math"],["3","Second Language (DF)"],["Break","Break"],["4","ICT"],["5","English"],["6","English"],["7","Chemistry"],["8","Chemistry"]],"Thursday":[["1","Religion (Islamic/Christian)"],["2","P.E."],["3","Chemistry"],["Break","Break"],["4","Math"],["5","History"],["6","English"],["7","English"],["8","ICT"]]},"Sec.1B":{"Sunday":[["1","Second Language (DF)"],["2","ICT"],["3","Art"],["Break","Break"],["4","Math"],["5","Math"],["6","History"],["7","English"],["8","English"]],"Monday":[["1","P.E."],["2","Chemistry"],["3","Chemistry"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","ICT"],["7","English"],["8","English"]],"Tuesday":[["1","ICT"],["2","English"],["3","English"],["Break","Break"],["4","Arabic"],["5","Arabic"],["6","Math"],["7","Math"],["8","Religion (Islamic/Christian)"]],"Wednesday":[["1","ICT"],["2","Arabic"],["3","Math"],["Break","Break"],["4","Chemistry"],["5","History"],["6","History"],["7","English"],["8","English"]],"Thursday":[["1","Religion (Islamic/Christian)"],["2","P.E."],["3","Second Language (DF)"],["Break","Break"],["4","Chemistry"],["5","Chemistry"],["6","History"],["7","History"],["8","English"]]},"Sec.2A":{"Sunday":[["1","Programming / Math / Physics"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","English"],["5","English"],["6",""],["7",""],["8",""]],"Monday":[["1","English"],["2","Programming / Math / Physics"],["3","Programming"],["Break","Break"],["4","History"],["5","History"],["6",""],["7",""],["8",""]],"Tuesday":[["1","Financial Culture"],["2","Arabic"],["3","English"],["Break","Break"],["4","Programming / Math / Physics"],["5","Programming"],["6",""],["7",""],["8",""]],"Wednesday":[["1","Financial Culture"],["2","History"],["3","History"],["Break","Break"],["4","Arabic"],["5",""],["6",""],["7",""],["8",""]],"Thursday":[["1","History"],["2","English"],["3","English"],["Break","Break"],["4","Arabic"],["5",""],["6",""],["7",""],["8",""]]},"Sec.2B":{"Sunday":[["1","Programming / Math / Physics"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","History"],["5","History"],["6",""],["7",""],["8",""]],"Monday":[["1","History"],["2","Programming / Math / Physics"],["3","Programming"],["Break","Break"],["4","Financial Culture"],["5","English"],["6",""],["7",""],["8",""]],"Tuesday":[["1","English"],["2","English"],["3","Financial Culture"],["Break","Break"],["4","Programming / Math / Physics"],["5","Programming"],["6",""],["7",""],["8",""]],"Wednesday":[["1","History"],["2","English"],["3","English"],["Break","Break"],["4","Arabic"],["5",""],["6",""],["7",""],["8",""]],"Thursday":[["1","English"],["2","Arabic"],["3","Arabic"],["Break","Break"],["4","History"],["5",""],["6",""],["7",""],["8",""]]}};
+
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday"];
+const TODAY = DAYS[new Date().getDay()] || null;
+
+function stageOf(name){
+  if(name.startsWith("Prim")) return "Primary";
+  if(name.startsWith("Prep")) return "Preparatory";
+  if(name.startsWith("Sec")) return "Secondary";
+  return "Other";
+}
+function gradeSort(name){
+  const m = name.match(/([A-Za-z]+)\.(\d+)([A-Z])/);
+  return m ? [m[1], parseInt(m[2]), m[3]] : [name,0,""];
+}
+
+const classNames = Object.keys(DATA).sort((a,b)=>{
+  const ga=gradeSort(a), gb=gradeSort(b);
+  if(ga[1]!==gb[1]) return ga[1]-gb[1];
+  return ga[2]<gb[2]?-1:1;
+});
+const stages = ["Primary","Preparatory","Secondary"];
+let activeStage = "Primary";
+let activeClass = classNames.find(n=>stageOf(n)===activeStage);
+
+const CATS = [
+  {test:/english|arabic|second language|phonics|story/i, color:"var(--lang)", label:"Languages"},
+  {test:/math|science|ict|computer|programming|physics|chemistry/i, color:"var(--stem)", label:"STEM"},
+  {test:/history|social|religion|financial/i, color:"var(--human)", label:"Humanities"},
+  {test:/art|music|p\.e\.|library/i, color:"var(--art)", label:"Creative & PE"},
+];
+function catFor(subject){
+  for(const c of CATS) if(c.test.test(subject)) return c;
+  return null;
+}
+
+function renderStageTabs(){
+  const el = document.getElementById('stageTabs');
+  el.innerHTML = stages.map(s=>`<button class="stage-tab${s===activeStage?' active':''}" data-stage="${s}">${s}</button>`).join('');
+  el.querySelectorAll('.stage-tab').forEach(btn=>{
+    btn.onclick = ()=>{
+      activeStage = btn.dataset.stage;
+      const first = classNames.find(n=>stageOf(n)===activeStage);
+      if(first) activeClass = first;
+      renderAll();
+    };
+  });
+}
+
+function renderClassGrid(){
+  const el = document.getElementById('classGrid');
+  const inStage = classNames.filter(n=>stageOf(n)===activeStage);
+  el.innerHTML = inStage.map(n=>`<button class="class-chip${n===activeClass?' active':''}" data-class="${n}">${n}</button>`).join('');
+  el.querySelectorAll('.class-chip').forEach(btn=>{
+    btn.onclick = ()=>{ activeClass = btn.dataset.class; renderAll(); };
+  });
+}
+
+function renderTable(){
+  document.getElementById('className').textContent = activeClass;
+  document.getElementById('classMeta').textContent = activeStage + ' · ' + classNames.filter(n=>stageOf(n)===activeStage).length + ' classes in this stage';
+
+  const sched = DATA[activeClass];
+  const firstDay = sched[DAYS.find(d=>sched[d])];
+  const cols = firstDay.map(pair=>pair[0]); // ordered period labels, e.g. ["1","2","3","Break","4",...]
+
+  // rows = days (day name in the left/number spot), columns = periods
+  // merge consecutive periods with the identical subject into one spanned cell (matches the school's original PDF layout)
+  let rows = DAYS.map(day=>{
+    const periodPairs = sched[day] || [];
+    const valAt = idx => (periodPairs[idx] ? periodPairs[idx][1] : '');
+    let cells = '';
+    let i = 0;
+    while(i < cols.length){
+      const col = cols[i];
+      if(col === 'Break'){
+        cells += `<td class="brk">Break</td>`;
+        i++;
+        continue;
+      }
+      const v = valAt(i);
+      let span = 1;
+      while(i+span < cols.length && cols[i+span] !== 'Break' && valAt(i+span) === v){
+        span++;
+      }
+      if(!v){
+        cells += `<td class="subject empty" colspan="${span}">—</td>`;
+      } else {
+        const cat = catFor(v);
+        const dot = cat ? `<span class="dot" style="background:${cat.color}"></span>` : '';
+        cells += `<td class="subject" colspan="${span}">${dot}${v}</td>`;
+      }
+      i += span;
+    }
+    return `<tr><td class="period-col${day===TODAY?' today':''}">${day}</td>${cells}</tr>`;
+  }).join('');
+
+  let periodHeadRow = '<th class="period-col"></th>' + cols.map(c=>`<th class="${c==='Break'?'brk-head':''}">${c==='Break'?'Break':c}</th>`).join('');
+
+  document.getElementById('ttTable').innerHTML =
+    '<thead><tr>'+periodHeadRow+'</tr></thead><tbody>'+rows+'</tbody>';
+
+  document.getElementById('legend').innerHTML = CATS.map(c=>
+    `<span><span class="dot" style="background:${c.color}"></span>${c.label}</span>`
+  ).join('') + `<span><span class="dot" style="background:var(--break-bg);border:1px solid var(--line)"></span>Break</span>`;
+}
+
+function renderAll(){
+  renderStageTabs();
+  renderClassGrid();
+  renderTable();
+}
+renderAll();
+</script>
+</body>
+</html>
